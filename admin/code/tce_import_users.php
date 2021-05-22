@@ -44,6 +44,7 @@ require_once('../../shared/code/tce_functions_form.php');
 switch ($menu_mode) {
     case 'upload': {
         if ($_FILES['userfile']['name']) {
+			// echo $_FILES['userfile']['name'];
             require_once('../code/tce_functions_upload.php');
             // upload file
             $uploadedfile = F_upload_file('userfile', K_PATH_CACHE);
@@ -55,7 +56,24 @@ switch ($menu_mode) {
                         break;
                     }
                     case 2: {
+						// echo K_PATH_CACHE.$uploadedfile;
+						// echo $uploadedfile;
                         if (F_import_tsv_users(K_PATH_CACHE.$uploadedfile)) {
+                            F_print_error('MESSAGE', $l['m_importing_complete']);
+                        }
+                        break;
+                    }
+					case 3: {
+						// echo K_PATH_CACHE.$uploadedfile;
+						// echo $uploadedfile;
+						$new_filename = $uploadedfile.'_'.date('Y-m-d_H_i_s').'.tsv';
+						require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
+						$excel = PHPExcel_IOFactory::load(K_PATH_CACHE.$uploadedfile);
+						$writer = PHPExcel_IOFactory::createWriter($excel, 'CSV');
+						$writer->setDelimiter("\t");
+						$writer->setEnclosure("");
+						$writer->save(K_PATH_CACHE.$new_filename);
+                        if (F_import_tsv_users(K_PATH_CACHE.$new_filename)) {
                             F_print_error('MESSAGE', $l['m_importing_complete']);
                         }
                         break;
@@ -91,13 +109,20 @@ switch ($menu_mode) {
 <div class="row">
 <div class="formw">
 <fieldset class="noborder">
-<legend title="<?php echo $l['h_file_type']; ?>"><?php echo $l['w_type']; ?></legend>
+<legend title="<?php echo $l['h_file_type']; ?>"><?php echo 'Tipe file'; ?></legend>
 
+<div class="mb-5">
 <input type="radio" name="file_type" id="file_type_xml" value="1" checked="checked" title="<?php echo $l['h_file_type_xml']; ?>" />
 <label for="file_type_xml">XML</label>
-<br />
+</div>
+<div class="mb-5">
 <input type="radio" name="file_type" id="file_type_tsv" value="2" title="<?php echo $l['h_file_type_tsv']; ?>" />
 <label for="file_type_tsv">TSV</label>
+</div>
+<div class="mb-5 mt-10">
+<input type="radio" name="file_type" id="file_type_xlsx" value="3" title="<?php echo 'XLSX'; ?>" />
+<label for="file_type_xlsx">XLSX</label> <a href="../../template/tcexam_users_template_awal.xlsx" class="bg-green p-5 brad-5 ft-white"><i class="fas fa-file-excel"></i> Download Template User</a>
+</div>
 </fieldset>
 </div>
 </div>

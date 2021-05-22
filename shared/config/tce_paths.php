@@ -31,22 +31,22 @@
 /**
  * Host URL (e.g.: "http://www.yoursite.com").
  */
-define('K_PATH_HOST', 'http://localhost');
+define('K_PATH_HOST', 'http://194.233.74.167');
 /* if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443)
 {
-	define('K_PATH_HOST', 'http://localhost'.$_SERVER['SERVER_NAME']);
+	define('K_PATH_HOST', 'http://194.233.74.167'.$_SERVER['SERVER_NAME']);
 }else{
-	define('K_PATH_HOST', 'http://localhost'.$_SERVER['SERVER_NAME']);
+	define('K_PATH_HOST', 'http://194.233.74.167'.$_SERVER['SERVER_NAME']);
 } */
 /**
  * Relative URL where this program is installed (e.g.: "/").
  */
-define('K_PATH_TCEXAM', '/tmfajax-public/tmfajax/');
+define('K_PATH_TCEXAM', '/lab/tmfajax/');
 
 /**
  * Real full path where this program is installed (e.g: "/var/www/html/TCExam/").
  */
-define('K_PATH_MAIN', 'C:/xampp74/htdocs/tmfajax-public/tmfajax/');
+define('K_PATH_MAIN', '/var/www/html/lab/tmfajax/');
 
 /**
  * Constant used on TCPDF library.

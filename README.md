@@ -1,8 +1,22 @@
 # TCExam Mobile Friendly (TMF) Project with AJAX Support
 
-CBT Forking dari TMF (TCExam Mobile Friendly) dengan modifikasi pada loading soal dan kirim jawaban melalui AJAX.
+```git
+git init
+git add .
+git commit -m "Update 22052021_0833"
+git branch -M main
+git remote add origin https://github.com/ryanbekabe/tmfajax.git
+git push -u origin main
 
-Login Screen
+tmfajax/install/install.php
+tmfajax/shared/config/tce_db_config.php
+```
+
+Aplikasi Ujian (CBT) yang cepat, ringan dan gesit, cocok untuk berbagai mata pelajaran maupun segala jenjang pendidikan atau kebutuhan. Mampu menampung banyak peserta ujian dalam satu waktu bersamaan meskipun dijalankan pada shared hosting. 
+Tipe soal cukup beragam, bisa dikondisikan untuk melatih peserta didik mempersiapkan AKM atau untuk event lainnya.
+Projek ini merupakan Forking dari TMF (TCExam Mobile Friendly) dengan modifikasi pada loading soal dan kirim jawaban melalui AJAX dari sisi peserta ujian.
+
+Halaman Login
 
 <img src="https://1.bp.blogspot.com/-3a273pl2fYY/YGwaHMtlOEI/AAAAAAAATfc/ziojUbNS4XI8YvIjFkuPQLZoU8uRJbNrACLcBGAsYHQ/s1862/Screenshot_2021-04-06-15-18-21-007_com.android.chrome.png" width="200px"/>
 
@@ -10,7 +24,7 @@ Daftar Ujian
 
 <img src="https://1.bp.blogspot.com/-xS6uPb0zYQI/YGwbjk6RaKI/AAAAAAAATfo/oNzqY_NPMjUlr3uAvdc0xQPbiv9dTRxcACLcBGAsYHQ/s1857/Screenshot_2021-04-06-15-26-38-765_com.android.chrome.png" width="200px"/>
 
-## Mendukung beberapa tipe soal seperti:
+## Mendukung beberapa tipe soal seperti
 - Pilihan ganda jawaban tunggal
 - Pilihan ganda jawaban jamak
 - Menjodohkan / mengurutkan jawaban
@@ -18,38 +32,29 @@ Daftar Ujian
 - Uraian panjang dengan kemampuan tambahan upload jawaban dari gambar / foto
 
 ## Fitur improvement dari TCExam
+- Input Soal lebih mudah, melalui Template MS Excel
+- Disediakan layanan online utk input soal melalui Template MS Word.
+- Fitur Mode Darurat (Lembar Halaman Offline), yang memungkinkan proses ujian tanpa kuota utama dan tanpa server.
 - Editing soal menggunakan antar muka HTML Editor, support konversi otomatis equation dari MS Word
-- Generate Test Data untuk loading soal lebih cepat
+- Generate Test Data agar loading soal lebih cepat dengan user lebih banyak dalam satu waktu
 - Mengijinkan editing soal/jawaban/setting ujian meskipun Test sedang berjalan
 - Laporan rekap kehadiran Test
-- Upload gambar utk jenis soal Uraian
-- Export hasil Test format EXCEL
+- Peserta ujian dapat meng-upload jawaban dalam bentuk gambar pada jenis soal Uraian
+- Export hasil Test ke format EXCEL
 - Halaman General Setting untuk mengatur beberapa bagian CBT dengan lebih mudah
 - Opsi penjodohan bisa berupa angka maupun Teks, labelnya bisa berupa angka, teks, gambar atau media lain seperti video
+- Jumlah pengulangan ujian dapat diset sesuai keinginan, tidak lagi unlimited, namun opsi unlimited masih tersedia.
 - Theme yang lebih modern dan fresh :)
+- Export dan Import user melalui format file Excel
+- Terdapat fitur pengumuman Surat Keterangan Lulus Online, namun dengan teknik yang masih sederhana.
 
-## CARA INSTALASI PADA KOMPUTER LOKAL (LOCALHOST - XAMPP)
-Asumsikan user database pada XAMPP adalah root dan TANPA password.
-1. Unduh repository TMFAJAX yang berada di github ini sebagai zip, link langsung unduh ada di https://github.com/xamzone/tmfajax/archive/refs/heads/main.zip  
-2. Extract dan letakkan folder hasil extract (tmfajax-main) ke htdocs pada XAMPP
-3. Buka web browser, ketikkan http://localhost/tmfajax-main/install/install.php
-4. Sesuai asumsi di atas, pastikan Db User adalah root
-5. Sesuai asumsi di atas, pastikan Db Password dibiarkan kosong
-6. Pada bagian DB Name, ketikkan nama database yang akan dipakai oleh TMFAJAX, apabila database belum dibuat maka otomatis akan dibuat oleh installer apabila bagian Create New Database DICENTANG.
-7. Apabila kita melakukan instalasi baru, Drop Existing Database biarkan dalam kondisi tercentang. Apabila database sudah ada sebelumnya dan sudah ada data penting, sebaiknya JANGAN DICENTANG
-8. Opsi Create New Database? bisa dicentang apabila kita ingin installer otomatis membuatkan database.   
-9. Klik tombol INSTALL
-10. Tunggu proses install
-11. Apabila terdapat FATAL ERROR: Maximum execution time of 30 seconds exceeced in bla bla bla ...., silakan setting php.ini pada XAMPP, cari bagian max_execution_time=30, ganti 30 menjadi 120 atau yang lebih tinggi. Simpan file php.ini. Hentikan Apache melalui tombol Stop, kemudian tekan lagi tombol Start pada Apache. 
-12. Apabila terdapat 3 (tiga) WARNING, biarkan saja
-13. Klik link click here di bawah untuk memulai login ke sistem
-14. Gunakan akun default dengan username: admin password: 1234
-15. Setelah berhasil login, klik MENU UTAMA, dan klik link Admin untuk mulai mengelola CBT TMFAJAX
-16. Apabila terdapat Notice: unserialize(): Error at offset bla bla bla, Notice: Undefined variable: tmx in bla bla bla, Notice: date_default_timezone_set(): bla bla bla... cara perbaikannya adalah :
-17. Unduh file tmf_general_settings.json di link ini https://raw.githubusercontent.com/xamzone/tmfajax/main/shared/config/tmf_general_settings.json
-18. Letakkan / timpakan ke dalam folder shared/config/
-19. Masuk ke Admin, masuk ke General Setting, lalu klik tombol UPDATE berwarna abu-abu gelap
-20. Anda diperbolehkan untuk mengubah nilai yang ada di General Setting sesuai kebutuhan masing-masing, termasuk Site Author, Deskripsi aplikasi dan lain-lain.
+## CARA INSTALASI
+Panduan instalasi dan tutorial lainnya silakan bisa dipelajari di https://bit.ly/3f0Oq5D
+
+## Kebutuhan Sistem
+1. Web server (Apache/nginx/OLS, dan lainnya)
+2. PHP 5.6 s.d 8.0.x
+3. Database MySQL/MariaDB/Postgre/Oracle
 
 ## Contact
 1. Blog: [mamans86.blogspot.com](https://mamans86.blogspot.com)

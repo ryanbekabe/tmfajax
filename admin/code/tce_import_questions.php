@@ -68,6 +68,24 @@ if (isset($menu_mode) and ($menu_mode == 'upload')) {
                     break;
                 }
                 case 3: {
+					$new_filename = $uploadedfile.'_'.date('Y-m-d_H_i_s').'.tsv';
+					require_once 'PHPExcel/Classes/PHPExcel/IOFactory.php';
+					$excel = PHPExcel_IOFactory::load(K_PATH_CACHE.$uploadedfile);
+					$writer = PHPExcel_IOFactory::createWriter($excel, 'CSV');
+					$writer->setDelimiter("\t");
+					$writer->setEnclosure("\"");
+					$writer->save(K_PATH_CACHE.$new_filename);
+					$qimp = F_TSVQuestionImporter(K_PATH_CACHE.$new_filename);
+					// if (F_import_tsv_users(K_PATH_CACHE.$new_filename)) {
+						// F_print_error('MESSAGE', $l['m_importing_complete']);
+					// }
+					break;
+                    // Custom TCExam XML format
+                    // require_once('../code/tce_import_custom.php');
+                    // $qimp = new CustomQuestionImporter(K_PATH_CACHE.$uploadedfile);
+                    // break;
+                }
+				case 4: {
                     // Custom TCExam XML format
                     require_once('../code/tce_import_custom.php');
                     $qimp = new CustomQuestionImporter(K_PATH_CACHE.$uploadedfile);
@@ -102,19 +120,26 @@ echo '<div class="formw">'.K_NEWLINE;
 echo '<fieldset class="noborder">'.K_NEWLINE;
 
 echo '<legend title="'.$l['w_type'].'">'.$l['w_type'].'</legend>'.K_NEWLINE;
-echo '<input type="radio" name="type" id="type_xml" value="1" title="TCExam XML Format"';
+echo '<div class="mb-5"><input type="radio" name="type" id="type_xml" value="1" title="TCExam XML Format"';
 if ($type == 1) {
     echo ' checked="checked"';
 }
 echo ' />';
-echo '<label for="type_xml">TCExam XML</label><br />'.K_NEWLINE;
+echo '<label for="type_xml"> TCExam XML</label></div>'.K_NEWLINE;
 
-echo '<input type="radio" name="type" id="type_tsv" value="2" title="TCExam TSV Format"'.K_NEWLINE;
+echo '<div class="mb-5"><input type="radio" name="type" id="type_tsv" value="2" title="TCExam TSV Format"'.K_NEWLINE;
 if ($type == 2) {
     echo ' checked="checked"';
 }
 echo ' />';
-echo '<label for="type_tsv">TCExam TSV</label>'.K_NEWLINE;
+echo '<label for="type_tsv"> TCExam TSV</label></div>'.K_NEWLINE;
+
+echo '<div class="mb-10 mt-10"><input type="radio" name="type" id="type_xlsx" value="3" title="XLSX Format"'.K_NEWLINE;
+if ($type == 3) {
+    echo ' checked="checked"';
+}
+echo ' />';
+echo '<label for="type_xlsx"> Excel Format (.XLSX)</label> <a href="../../template/template_soal_excel_tcexam.xlsm" class="bg-green p-5 brad-5 ft-white"><i class="fas fa-file-excel"></i> Download Template Soal</a></div>'.K_NEWLINE;
 
 $custom_import = K_ENABLE_CUSTOM_IMPORT;
 if (!empty($custom_import)) {

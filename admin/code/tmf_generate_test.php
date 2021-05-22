@@ -104,7 +104,7 @@ if ($r = F_db_query($sql, $db)) {
 // 1. create user's test entry
 // ------------------------------
 $values = implode(", ", $userTestEntry);
-$sql = 'INSERT INTO '.K_TABLE_TEST_USER.' (
+$sql = 'INSERT IGNORE INTO '.K_TABLE_TEST_USER.' (
 	testuser_id,
 	testuser_test_id,
 	testuser_user_id,

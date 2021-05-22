@@ -47,6 +47,19 @@ function F_is_allowed_upload($filename)
     return false;
 }
 
+function F_is_allowed_upload_custom($filename, $extension)
+{
+    if (!isset($extension)) {
+        return false;
+    }
+    $allowed_extensions = unserialize($extension);
+    $path_parts = pathinfo($filename);
+    if (in_array(strtolower($path_parts['extension']), $allowed_extensions)) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Uploads image file to the server.
  * @author Nicola Asuni
@@ -64,6 +77,38 @@ function F_upload_file($fieldname, $uploaddir)
     $filename = preg_replace('/[^a-zA-Z0-9_\.\-]/', '', $filename);
     $filepath = $uploaddir.$filename;
     if (F_is_allowed_upload($filename) and move_uploaded_file($_FILES[$fieldname]['tmp_name'], $filepath)) {
+        F_print_error('MESSAGE', htmlspecialchars($filename).': '.$l['m_upload_yes']);
+        return $filename;
+    }
+    F_print_error('ERROR', htmlspecialchars($filename).': '.$l['m_upload_not'].'');
+    return false;
+}
+
+function F_upload_mediafile($fieldname, $uploaddir)
+{
+    global $l;
+    require_once('../config/tce_config.php');
+    // sanitize file name
+    $filename = $_FILES[$fieldname]['name'];
+    // $filename = preg_replace('/[^a-zA-Z0-9_\.\-]/', '', $filename);
+    $filepath = $uploaddir.$filename;
+    if (F_is_allowed_upload($filename) and move_uploaded_file($_FILES[$fieldname]['tmp_name'], $filepath)) {
+        F_print_error('MESSAGE', htmlspecialchars($filename).': '.$l['m_upload_yes']);
+        return $filename;
+    }
+    F_print_error('ERROR', htmlspecialchars($filename).': '.$l['m_upload_not'].'');
+    return false;
+}
+
+function F_upload_file_custom($fieldname, $uploaddir, $extension)
+{
+    global $l;
+    require_once('../config/tce_config.php');
+    // sanitize file name
+    $filename = preg_replace('/[\s]/', '_', $_FILES[$fieldname]['name']);
+    $filename = preg_replace('/[^a-zA-Z0-9_\.\-]/', '', $filename);
+    $filepath = $uploaddir.$filename;
+    if (F_is_allowed_upload_custom($filename, $extension) and move_uploaded_file($_FILES[$fieldname]['tmp_name'], $filepath)) {
         F_print_error('MESSAGE', htmlspecialchars($filename).': '.$l['m_upload_yes']);
         return $filename;
     }

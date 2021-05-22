@@ -58,6 +58,34 @@ if (isset($_REQUEST['test_id']) and ($_REQUEST['test_id'] > 0)) {
     $test_id = 0;
 }
 
+if (isset($_REQUEST['group_id']) and !empty($_REQUEST['group_id'])) {
+    $group_id = intval($_REQUEST['group_id']);
+    $filter .= '&amp;group_id='.$group_id.'';
+} else {
+    $group_id = 0;
+}
+
+// filtering options
+if (isset($_REQUEST['startdate'])) {
+    $startdate = $_REQUEST['startdate'];
+    $startdate_time = strtotime($startdate);
+    $startdate = date(K_TIMESTAMP_FORMAT, $startdate_time);
+} else {
+    $startdate = date('Y').'-01-01 00:00:00';
+}
+$filter .= '&amp;startdate='.urlencode($startdate);
+if (isset($_REQUEST['enddate'])) {
+    $enddate = $_REQUEST['enddate'];
+    $enddate_time = strtotime($enddate);
+    $enddate = date(K_TIMESTAMP_FORMAT, $enddate_time);
+} else {
+    $enddate = date('Y').'-12-31 23:59:59';
+}
+$filter .= '&amp;enddate='.urlencode($enddate).'';
+
+// echo $filter;
+// echo $group_id;
+
 echo '<div class="container">'.K_NEWLINE;
 
 echo '<div class="tceformbox">'.K_NEWLINE;
@@ -103,6 +131,46 @@ echo '<a href="#" onclick="'.$jsaction.'" class="xmlbutton" title="'.$l['w_selec
 echo '</span>'.K_NEWLINE;
 echo '</div>'.K_NEWLINE;
 
+echo getFormNoscriptSelect('selectcategory');
+
+/* echo getFormRowTextInput('startdate', $l['w_time_begin'], $l['w_time_begin'].' '.$l['w_datetime_format'], '', $startdate, '', 19, false, true, false);
+echo getFormRowTextInput('enddate', $l['w_time_end'], $l['w_time_end'].' '.$l['w_datetime_format'], '', $enddate, '', 19, false, true, false); */
+
+echo '<div class="row">'.K_NEWLINE;
+echo '<span class="label">'.K_NEWLINE;
+echo '<label for="group_id">'.$l['w_group'].'</label>'.K_NEWLINE;
+echo '</span>'.K_NEWLINE;
+echo '<span class="formw">'.K_NEWLINE;
+//echo '<select name="group_id" id="group_id" size="0" onchange="document.getElementById(\'form_resultallusers\').submit()">'.K_NEWLINE;
+echo '<select name="group_id" id="group_id" size="0">'.K_NEWLINE;
+$sql = 'SELECT * FROM '.K_TABLE_GROUPS.'';
+if ($test_id > 0) {
+    $sql .= ' WHERE group_id IN ('.$test_group_ids.')';
+}
+$sql .= ' ORDER BY group_name';
+if ($r = F_db_query($sql, $db)) {
+    echo '<option value="0"';
+    if ($group_id == 0) {
+        echo ' selected="selected"';
+    }
+    echo '>&nbsp;-&nbsp;</option>'.K_NEWLINE;
+    while ($m = F_db_fetch_array($r)) {
+        echo '<option value="'.$m['group_id'].'"';
+        if ($m['group_id'] == $group_id) {
+            echo ' selected="selected"';
+        }
+        echo '>'.htmlspecialchars($m['group_name'], ENT_NOQUOTES, $l['a_meta_charset']).'</option>'.K_NEWLINE;
+    }
+} else {
+    echo '</select></span></div>'.K_NEWLINE;
+    F_display_db_error();
+}
+echo '</select>'.K_NEWLINE;
+echo '</span>'.K_NEWLINE;
+echo '</div>'.K_NEWLINE;
+
+echo getFormNoscriptSelect('selectgroup');
+
 echo '<div class="row" style="border:none">'.K_NEWLINE;
 echo '<span class="label">&nbsp;</span>'.K_NEWLINE;
 echo '<span class="formw">'.K_NEWLINE;
@@ -146,7 +214,12 @@ if($test_id>0){
 				$dt_s_ujian=array();
 				while($mgl = F_db_fetch_array($rgl)){
 //					echo "&nbsp;&nbsp;&nbsp;Group ID = ".$mgl[0]."<br/>";
-					$sqlul = 'SELECT usrgrp_user_id FROM '.K_TABLE_USERGROUP.' WHERE usrgrp_group_id='.$mgl[0];
+					if($group_id>0){
+						$group_ids = $group_id;
+					}else{
+						$group_ids = $mgl[0];
+					}
+					$sqlul = 'SELECT usrgrp_user_id FROM '.K_TABLE_USERGROUP.' WHERE usrgrp_group_id='.$group_ids;
 					if($rul = F_db_query($sqlul, $db)){
 						while($mul = F_db_fetch_array($rul)){
 //							echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User ID = ".$mul[0]."<br/>";

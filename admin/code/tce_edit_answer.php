@@ -67,7 +67,7 @@ require_once('../../shared/code/tce_functions_auth_sql.php');
 			CKEDITOR.replace( a ,{
 				filebrowserBrowseUrl : '../../filemanager/dialog.php?akey=<?php echo K_RANDOM_SECURITY; ?>&type=2&editor=ckeditor&fldr=',
 				filebrowserUploadUrl : '../../filemanager/dialog.php?responseType=json&akey=<?php echo K_RANDOM_SECURITY; ?>&type=2&editor=ckeditor&fldr=',
-				filebrowserImageBrowseUrl : '../../filemanager/dialog.php?akey=<?php echo K_RANDOM_SECURITY; ?>&type=1&editor=ckeditor&fldr='
+				filebrowserImageBrowseUrl : '../../filemanager/dialog.php?akey=<?php echo K_RANDOM_SECURITY; ?>&type=2&editor=ckeditor&fldr='
 				// uploadUrl = '../../xxx/upload.php'
 			});
 			document.getElementById(b).textContent = 'Unload Editor';

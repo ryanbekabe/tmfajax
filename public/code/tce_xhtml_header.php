@@ -225,7 +225,7 @@ echo '<!-- '.'T'.'C'.'E'.'x'.'a'.'m'.'19'.'73'.'01'.'04'.' -->'.K_NEWLINE;
 	// echo ' style="background-image:url('.LOGIN_BG_IMAGE.');background-position:'.LOGIN_BG_IMAGE_POSITION.';background-size:'.LOGIN_BG_IMAGE_SIZE.';background-blend-mode:'.LOGIN_BG_IMAGE_BLEND_MODE.'"';
 	// }
   ?>
-  
+<!-- </head> -->  
 </head>
 <?php
 echo '<body>'.K_NEWLINE;

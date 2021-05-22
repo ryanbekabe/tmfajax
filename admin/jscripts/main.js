@@ -178,6 +178,27 @@ function checkAll(a){
 	}
 }
 
+function downloadAll(a){
+	var h = document.getElementById("footer");
+	
+	var cbArr = document.querySelectorAll(a);
+	for(let i=0; i < cbArr.length; i++){
+		h.insertAdjacentHTML('afterend', '<iframe id="dl-all'+i+'" style="width:0;height:0;border:none"></iframe>');
+		document.getElementById('dl-all'+i).setAttribute('src', cbArr[i].href);
+		// setTimeout(function(){console.log("xxx")}, 3000);
+	}
+}
+
+function setAwalTahun(){
+	var tanggal = new Date();
+	var newTanggal = tanggal.getFullYear()+'-01-01 00:00:00';
+	document.getElementById('startdate').value = newTanggal;
+}
+
+var h = document.getElementById("startdate_date_trigger");
+h.insertAdjacentHTML('afterend', '&nbsp;<button title="Ke awal waktu" onclick="event.preventDefault();document.getElementById(\'startdate\').value = \'0001-01-01 00:00:00\'; document.getElementById(\'form_resultallusers\').submit()"><i class="fas fa-history"></i></button>&nbsp;<button title="Ke awal tahun" onclick="event.preventDefault();setAwalTahun();document.getElementById(\'form_resultallusers\').submit()"><i class="fas fa-calendar-alt"></i></button>');
+
+
 //uncheck all
 function unCheckAll(a){
 	var cbArr = document.querySelectorAll(a);

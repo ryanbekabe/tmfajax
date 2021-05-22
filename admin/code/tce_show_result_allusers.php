@@ -39,6 +39,11 @@ $thispage_title = $l['t_result_all_users'];
 $thispage_title_icon = '<i class="fas fa-paste mr-5"></i>';
 $enable_calendar = true;
 require_once('tce_page_header.php');
+echo '<link href="../../shared/jscripts/vendor/dropzonejs/dropzone.css" rel="stylesheet">'.K_NEWLINE;
+echo '<script src="../../shared/jscripts/vendor/dropzonejs/dropzone.js"></script>'.K_NEWLINE;
+echo '<style>'.K_NEWLINE;
+echo '.dropzone{border: 2px dashed rgba(0, 0, 0, 0.3);border-radius:10px}';
+echo '</style>'.K_NEWLINE;
 require_once('../../shared/code/tce_functions_form.php');
 require_once('../../shared/code/tce_functions_tcecode.php');
 require_once('../../shared/code/tce_functions_test.php');
@@ -64,8 +69,10 @@ if (isset($_REQUEST['test_id']) and ($_REQUEST['test_id'] > 0)) {
     }
     $filter .= '&amp;test_id='.$test_id.'';
     $test_group_ids = F_getTestGroups($test_id);
+	$hiddenclass='';
 } else {
     $test_id = 0;
+	$hiddenclass = 'style="display:none!important"';
 }
 if (isset($_REQUEST['user_id'])) {
     $user_id = intval($_REQUEST['user_id']);
@@ -122,7 +129,12 @@ if (isset($_POST['lock'])) {
     $menu_mode = 'unlock';
 } elseif (isset($_POST['extendtime'])) {
     $menu_mode = 'extendtime';
-}
+} elseif (isset($_POST['regrade'])) { //tmfajax mod
+    $menu_mode = 'regrade';
+} 
+/* elseif (isset($_POST['download'])) {
+    $menu_mode = 'download';
+} */
 
 if (isset($_REQUEST['order_field']) and !empty($_REQUEST['order_field']) and (in_array($_REQUEST['order_field'], array('testuser_creation_time', 'testuser_end_time', 'user_name', 'user_lastname', 'user_firstname', 'total_score', 'testuser_test_id')))) {
     $order_field = $_REQUEST['order_field'];
@@ -148,6 +160,28 @@ if (isset($menu_mode) and (!empty($menu_mode))) {
         if (isset($$keyname)) {
             $testuser_id = $$keyname;
             switch ($menu_mode) {
+				/* case 'download':{
+					// echo $testuser_id;
+					$sqldl = 'SELECT testuser_test_id, testuser_user_id FROM '.K_TABLE_TEST_USER.'
+						WHERE testuser_id='.$testuser_id.' LIMIT 1';
+					// echo $sqldl;	
+                    if ($rdl = F_db_query($sqldl, $db)) {
+						if ($mdl = F_db_fetch_array($rdl)) {
+							// echo $testuser_id.' - '.$mdl['testuser_test_id'].' - '.$mdl['testuser_user_id'];
+							
+							echo '<script>';
+							echo '	location.replace("tmf_show_offline_sheet.php?testuser_id='.$testuser_id.'&test_id='.$mdl['testuser_test_id'].'&user_id='.$mdl['testuser_user_id'].'");';
+							echo '</script>';
+							// sleep(1);
+							
+						}
+					}
+					
+                    // echo $testuser_id.' - '.$test_id.' - '.$user_id;
+					// header('Location:index.php');
+					
+                    break;
+                } */
                 case 'delete':{
                     $sql = 'DELETE FROM '.K_TABLE_TEST_USER.'
 						WHERE testuser_id='.$testuser_id.'';
@@ -178,6 +212,51 @@ if (isset($menu_mode) and (!empty($menu_mode))) {
                         F_display_db_error();
                     }
                     break;
+                }
+				case 'regrade':{
+			// regrade user score if answer key changed
+			$sqltl = 'SELECT testlog_id,testlog_question_id,testlog_answer_text FROM '.K_TABLE_TESTS_LOGS.' WHERE testlog_testuser_id='.$testuser_id;
+			if($rtl = F_db_query($sqltl, $db)){
+				while($mtl = F_db_fetch_array($rtl)){
+					$sqlsa = 'SELECT logansw_order FROM '.K_TABLE_LOG_ANSWER.' WHERE logansw_testlog_id='.$mtl[0].' AND logansw_selected=1 LIMIT 1';
+					$sqlqt = 'SELECT question_type FROM '.K_TABLE_QUESTIONS.' WHERE question_id='.$mtl[1].' LIMIT 1';
+					if($rqt = F_db_query($sqlqt, $db)){
+						if($mqt = F_db_fetch_array($rqt)){
+							if($mqt[0]==1){
+								$sqlsa = 'SELECT logansw_order FROM '.K_TABLE_LOG_ANSWER.' WHERE logansw_testlog_id='.$mtl[0].' AND logansw_selected=1 LIMIT 1';
+								if($rsa = F_db_query($sqlsa, $db)){
+									if($msa = F_db_fetch_array($rsa)){
+										F_updateQuestionLogRegrade($test_id, $mtl[0], array($msa[0]=>1), '', 0);
+									}
+								}
+							}elseif($mqt[0]==2){
+								$sqlsa = 'SELECT logansw_selected, logansw_order FROM '.K_TABLE_LOG_ANSWER.' WHERE logansw_testlog_id='.$mtl[0].' ORDER BY logansw_answer_id ASC';
+								if($rsa = F_db_query($sqlsa, $db)){
+									$arraysa2=array();
+									while($msa = F_db_fetch_array($rsa)){
+										$arraysa2 += array($msa[1]=>$msa[0]);
+									}
+									F_updateQuestionLogRegrade($test_id, $mtl[0], $arraysa2, '', 0);
+								}
+							}elseif($mqt[0]==3){
+								F_updateQuestionLogRegrade($test_id, $mtl[0], array(), $mtl[2], 0);
+							}elseif($mqt[0]==4){
+								$sqlsa = 'SELECT logansw_order, logansw_position FROM '.K_TABLE_LOG_ANSWER.' WHERE logansw_testlog_id='.$mtl[0].' ORDER BY logansw_answer_id ASC';
+								if($rsa = F_db_query($sqlsa, $db)){
+									$arraysa4=array();
+									while($msa = F_db_fetch_array($rsa)){
+										$arraysa4 += array($msa[0]=>$msa[1]);
+									}
+									//print_r($arraysa4);
+									F_updateQuestionLogRegrade($test_id, $mtl[0], $arraysa4, '', 0);
+									//echo "F_updateQuestionLogRegrade(".$test_id.", ".$mtl[0].", ".$arraysa4.", '', 0, '');";
+								}
+							}
+						}
+					}
+				}
+			}
+			break;
                 }
                 case 'lock':{
                     // update test mode to 4 = test locked
@@ -210,8 +289,8 @@ if (isset($menu_mode) and (!empty($menu_mode))) {
 echo '<div class="container">'.K_NEWLINE;
 
 echo '<div class="tceformbox">'.K_NEWLINE;
-echo '<form action="'.$_SERVER['SCRIPT_NAME'].'" method="post" enctype="multipart/form-data" id="form_resultallusers">'.K_NEWLINE;
 
+echo '<form action="'.$_SERVER['SCRIPT_NAME'].'" method="post" enctype="multipart/form-data" id="form_resultallusers">'.K_NEWLINE;
 echo '<div class="row">'.K_NEWLINE;
 echo '<span class="label">'.K_NEWLINE;
 echo '<label for="test_id">'.$l['w_test'].'</label>'.K_NEWLINE;
@@ -384,11 +463,15 @@ if (isset($_REQUEST['sel'])) {
         echo '<label for="checkall0">'.$l['w_uncheck_all'].'</label>';
         echo '</span>'.K_NEWLINE;
         echo '<br /><strong style="margin:5px">'.$l['m_with_selected'].'</strong><br />'.K_NEWLINE;
+		F_submit_button_confirm('regrade', 'Regrade', 'Regrade', 'style="display:none"');
+		F_submit_button_confirm('regradebtn', 'Regrade', 'Regrade', 'onclick="event.preventDefault();var cbArr = document.querySelectorAll(\'#form_resultallusers td input[type=checkbox]:checked\');if(cbArr.length==0){alert(\'Harap pilih hasil ujian peserta terlebih dahulu!\')}else{document.getElementById(\'regrade\').click()}" style="background:#009688"');
         F_submit_button_confirm('delete', $l['w_delete'], $l['h_delete'], 'onclick="return confirm(\''.$l['m_delete_confirm'].'\')"');
+        
         F_submit_button('lock', $l['w_lock'], $l['w_lock']);
         F_submit_button('unlock', $l['w_unlock'], $l['w_unlock']);
         F_submit_button('extendtime', '+'.K_EXTEND_TIME_MINUTES.' min', $l['h_add_five_minutes']);
-        echo '<br /><br />'.K_NEWLINE;
+		
+
     }
 
     echo '</div>'.K_NEWLINE;
@@ -413,10 +496,72 @@ if (isset($_REQUEST['sel'])) {
         echo '</div>'.K_NEWLINE;
     }
 
-    if ($itemcount > 0) {
+    
+}
+
+echo '<input type="hidden" name="sel" id="sel" value="1" />'.K_NEWLINE;
+echo '<input type="hidden" name="order_field" id="order_field" value="'.$order_field.'" />'.K_NEWLINE;
+echo '<input type="hidden" name="orderdir" id="orderdir" value="'.$orderdir.'" />'.K_NEWLINE;
+echo '<input type="hidden" name="itemcount" id="itemcount" value="'.$itemcount.'>" />'.K_NEWLINE;
+echo '</div>'.K_NEWLINE;
+echo F_getCSRFTokenField().K_NEWLINE;
+echo '</form>'.K_NEWLINE;
+
+echo '</div>'.K_NEWLINE;
+
+
+echo '</div>';
+
+echo '<div class="row d-block" '.$hiddenclass.'>';
+
+?>
+
+<div class="row">
+
+	<fieldset style="padding:1em">
+<h1 id="judul-koreksi-offline" class="ta-center" style="cursor:pointer">Koreksi Offline</h1>		
+<div id="area-koreksi-offline" style="display:none">
+<div class="row">
+<span class="label" style="width:10%"><label id="data_jawabanlbl" for="data_jawabantxt">Data Jawaban</label></span>
+<span class="formw d-block" style="width:90%"><textarea id="data_jawabantxt"></textarea><span class="ta-right">Pisahkan Data Jawaban satu dengan lainnya menggunakan tanda koma</span></span>
+</div>
+
+
+<div class="row"><span class="label" style="width:10%"></span><span class="formw" style="width:90%">atau</span></div>
+
+<div class="row">
+<span class="label" style="width:10%"><label id="file_jawabanlbl" for="file_jawaban">Upload file</label></span>
+<span class="formw" style="width:90%"><form id="upload-offline-answers" action="tmf_upload_offline_answers.php" class="dropzone w-100p" style="display:block"></form></span>
+</div>
+<div class="row" style="background:#fff9c4"><span class="label" style="width:10%"></span><span class="formw d-block" style="width:90%">* Tipe file yang diunggah harus berekstensi <b>.txt</b><br/>* Apabila tidak ada <b>Data Jawaban</b> atau File yang diunggah melalui form di atas, maka sistem akan melakukan koreksi jawaban melalui file yang telah diunggah ke folder <u>cache/offline-answers.</u></span></div>
+<div class="row d-flex jc-center">
+<?php
+if(isset($_REQUEST['test_id']) and $_REQUEST['test_id']>0){
+	F_submit_button_confirm('offline-eval', 'Mulai Koreksi', 'Mulai Koreksi', 'style="background:#4caf50" onclick="event.preventDefault();evalstart()"');
+}else{
+	F_submit_button_confirm('offline-eval', 'Mulai Koreksi', 'Mulai Koreksi', 'style="background:#607d8b" onclick="event.preventDefault();window.scrollTo(0,0);alert(\'Pilih dahulu nama test/ujian\')"');
+}
+?>
+</div>
+</div>
+</fieldset>
+</div>
+
+<?php        
+		
+
+echo '</div>';
+
+echo '<div class="row d-flex jc-center">';
+if ($itemcount > 0) {
         echo '<div class="row jc-center" id="btnAction">'.K_NEWLINE;
         // show buttons by case
-        echo '<a href="#" onclick="exportTableToExcel(\'test_result_users\');" class="xmlbutton" title="'.$l['h_xml_export'].'">Excel</a> ';
+		if(file_exists('tmf_show_offline_sheet.php')){
+			echo '<a href="#" onclick="downloadAll(\'#form_resultallusers td:last-child a\')" class="xmlbutton" title="Download offline sheet">Download All Offline Sheets</a> ';
+		}else{
+			echo '<a href="#" onclick="alert(\'File untuk keperluan ini harus request secara pribadi ke Maman Sulaeman\')" class="xmlbutton" title="Download offline sheet">Download All Offline Sheets</a> ';
+		}
+        echo '<a href="#" onclick="exportTableToExcel(\'test_result_users\');" class="xmlbutton" title="Export data ke Excel">Excel</a> ';
         echo '<a href="tce_xml_results.php?menu_mode=startlongprocess'.$filter.'" class="xmlbutton" title="'.$l['h_xml_export'].'">XML</a> ';
         echo '<a href="tce_xml_results.php?format=JSON&amp;menu_mode=startlongprocess'.$filter.'" class="xmlbutton" title="JSON">JSON</a> ';
         echo '<a href="tce_tsv_result_allusers.php?'.$filter.'&amp;order_field='.urlencode($order_field).'&amp;orderdir='.$orderdir.'" class="xmlbutton" title="'.$l['h_tsv_export'].'">TSV</a> ';
@@ -432,23 +577,49 @@ if (isset($_REQUEST['sel'])) {
             echo '<a href="tce_export_custom.php?menu_mode=startlongprocess'.$filter.'" class="xmlbutton" title="'.$custom_export.'">'.$custom_export.'</a> ';
         }
     }
-}
-
-echo '<input type="hidden" name="sel" id="sel" value="1" />'.K_NEWLINE;
-echo '<input type="hidden" name="order_field" id="order_field" value="'.$order_field.'" />'.K_NEWLINE;
-echo '<input type="hidden" name="orderdir" id="orderdir" value="'.$orderdir.'" />'.K_NEWLINE;
-echo '<input type="hidden" name="itemcount" id="itemcount" value="'.$itemcount.'>" />'.K_NEWLINE;
-echo '</div>'.K_NEWLINE;
-echo F_getCSRFTokenField().K_NEWLINE;
-echo '</form>'.K_NEWLINE;
-
-echo '</div>'.K_NEWLINE;
-
-echo '<div class="pagehelp">'.$l['hp_result_alluser'].'</div>'.K_NEWLINE;
+echo '</div>';
+echo '</div>';
+// echo '<div class="row">';
+// echo '<div class="pagehelp">'.$l['hp_result_alluser'].'</div>'.K_NEWLINE;
+// echo '</div>';
 echo '</div>';
 
+// echo '<div class="row">';
+// echo '<div class="pagehelp">'.$l['hp_result_alluser'].'</div>'.K_NEWLINE;
+// echo '</div>';	
 require_once('../code/tce_page_footer.php');
+?>
+<script>
+function evalstart(){
+	<?php if(file_exists('tmf_import_offline_users_answer.php')){ ?>
+	var data_jawaban = document.getElementById("data_jawabantxt").value;
+	$.ajax({
+		'url': 'tmf_import_offline_users_answer.php?data_jawaban='+data_jawaban+'&test_id=<?php echo $_REQUEST['test_id']; ?>',
+		'type': 'GET',
+		'beforeSend': function(){
+				$("input#offline-eval").val("MOHON TUNGGU . . .")},
+		'success': function(result){alert(result);$("input#offline-eval").val("MULAI KOREKSI")},
+		
+	})
+	<?php }else{ ?>
+	alert("File untuk keperluan ini harus request secara pribadi ke Maman Sulaeman");
+	<?php } ?>
+}
 
+Dropzone.options.uploadOfflineAnswers = {
+	acceptedFiles: 'text/plain'
+};
+
+$('#judul-koreksi-offline').click(function(){
+	$('#area-koreksi-offline').slideToggle();
+})
+</script>
+<?php
+if(isset($_GET['opentestresult'])){
+	echo '<script>'.K_NEWLINE;
+	echo 'document.getElementById(\'startdate\').value = \'0001-01-01 00:00:00\';document.getElementById(\'form_resultallusers\').submit()'.K_NEWLINE;
+	echo '</script>'.K_NEWLINE;
+}
 //============================================================+
 // END OF FILE
 //============================================================+

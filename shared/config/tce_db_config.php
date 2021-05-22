@@ -49,7 +49,7 @@ define('K_DATABASE_PORT', '3306');
 /**
  * database name (TCExam)
  */
-define('K_DATABASE_NAME', 'tmfajax');
+define('K_DATABASE_NAME', 'tcexam');
 
 /**
  * database user name
@@ -59,7 +59,7 @@ define('K_DATABASE_USER_NAME', 'root');
 /**
  * database user password
  */
-define('K_DATABASE_USER_PASSWORD', '');
+define('K_DATABASE_USER_PASSWORD', 'toor');
 
 /**
  * prefix for database tables names

@@ -50,8 +50,13 @@ if (isset($_REQUEST['testid']) and ($_REQUEST['testid'] > 0)) {
     echo '<br />'.K_NEWLINE;
     echo '<div class="row btn-action">'.K_NEWLINE;
     // display execute button
+	if(isset($_GET['starttest']) and $_GET['starttest']==="1"){
+		$generatedtest='starttest=1&amp;';
+	}else{
+		$generatedtest='';
+	}
 	if(isset($_GET['testpw']) and $_GET['testpw']==="1"){
-		echo '<a onclick="reloadCont.style.display=\'block\';backdrop(\'1\',\'1\');window.location.replace(\'tce_test_execute.php?testid='.$test_id.'';
+		echo '<a onclick="reloadCont.style.display=\'block\';backdrop(\'1\',\'1\');window.location.replace(\'tce_test_execute.php?'.$generatedtest.'testid='.$test_id.'';
 		if (isset($_REQUEST['repeat']) and ($_REQUEST['repeat'] == 1)) {
 			echo '&amp;repeat=1\');';
 		}else{
@@ -59,7 +64,7 @@ if (isset($_REQUEST['testid']) and ($_REQUEST['testid'] > 0)) {
 		}
 		echo '" title="'.$l['h_execute'].'" class="xmlbutton"><span class="icon-chevron-circle-right"></span> '.$l['w_execute'].'</a> ';
 	}else{
-		echo '<a onclick="reloadCont.style.display=\'block\';backdrop(\'1\',\'1\');setTimeout(function(){window.location.replace(\'tce_test_execute.php?testid='.$test_id.'';
+		echo '<a onclick="reloadCont.style.display=\'block\';backdrop(\'1\',\'1\');setTimeout(function(){window.location.replace(\'tce_test_execute.php?'.$generatedtest.'testid='.$test_id.'';
 		if (isset($_REQUEST['repeat']) and ($_REQUEST['repeat'] == 1)) {
 			echo '&amp;repeat=1\')},K_ENABLE_DELAY);';
 		}else{

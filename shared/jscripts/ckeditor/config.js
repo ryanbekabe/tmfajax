@@ -70,7 +70,9 @@ CKEDITOR.editorConfig = function( config ) {
 		'uploadimage,' +
 		'wysiwygarea';
 	// %REMOVE_END%
-	config.extraPlugins = 'eqneditor';
+	config.extraPlugins = 'html5video,eqneditor,html5audio';
+	// config.extraPlugins = 'html5audio';
+	// config.extraPlugins = 'html5video';
 	// config.extraPlugins = 'mathedit';
 	// config.imageUploadUrl = '../../cache/tmf_image_upload_url.php';
 	//config.pasteFromWordRemoveFontStyles=false;

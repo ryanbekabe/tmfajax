@@ -30,7 +30,7 @@
 /**
  * String used as a seed for some security code generation please change this value and keep it secret.
  */
-define('K_RANDOM_SECURITY', 'mkTzxf8WwUxwvj6w');
+define('K_RANDOM_SECURITY', 'qWL0teMmIMpFOzIT');
 
 /**
  * Maximum number of tests per year (last 365 days).

@@ -46,6 +46,19 @@ echo '<!-- '.base64_decode(K_KEY_SECURITY).' -->'.K_NEWLINE;
 //echo '<script src="'.K_PATH_SHARED_JSCRIPTS.'main.js"></script>'.K_NEWLINE;
 // echo '<script src="'.K_PATH_SHARED_JSCRIPTS.'plugins.min.js"></script>'.K_NEWLINE;
 echo '<script src="'.K_SITE_PLUGIN_SCRIPT.'"></script>'.K_NEWLINE;
+?>
+<script>
+	//Start - Script Anti Iframe
+	if (top.location != self.location) {
+	  top.location = self.location
+	}
+	
+	//atau gunakan di bawah ini
+	//if (parent.frames.length > 0) { parent.location.href = location.href; }
+	//source: http://kolom-tutorial.blogspot.com/2010/04/script-anti-iframe.html
+	//End - Script Anti Iframe
+</script>
+<?php
 if(isset($_SESSION['session_user_level']) and $_SESSION['session_user_level']<1){
 if(strlen(K_CLIENTUA)>0){	
 ?>
@@ -67,6 +80,7 @@ if(CLEAR_LS_ONLOGIN and isset($_SESSION['session_user_level']) and $_SESSION['se
 	echo '	clearStorage();'.K_NEWLINE;
 	echo '</script>'.K_NEWLINE;
 }
+echo '<!-- </body></html> -->'.K_NEWLINE;
 echo '</body>'.K_NEWLINE;
 echo '</html>';
 

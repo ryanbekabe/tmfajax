@@ -172,6 +172,12 @@ if (isset($menu_mode) and ($menu_mode == 'update') and isset($menu_action) and !
     F_print_error('MESSAGE', $l['m_updated']);
 }
 
+echo '<link href="../../shared/jscripts/vendor/dropzonejs/dropzone.css" rel="stylesheet">'.K_NEWLINE;
+echo '<script src="../../shared/jscripts/vendor/dropzonejs/dropzone.js"></script>'.K_NEWLINE;
+echo '<style>'.K_NEWLINE;
+echo '.dropzone{border: 2px dashed rgba(0, 0, 0, 0.3);border-radius:10px}';
+echo '</style>'.K_NEWLINE;
+
 echo '<div class="container">'.K_NEWLINE;
 
 echo '<div class="tceformbox">'.K_NEWLINE;
@@ -184,6 +190,8 @@ echo '</span>'.K_NEWLINE;
 echo '<span class="formw">'.K_NEWLINE;
 echo '<input type="hidden" name="changemodule" id="changemodule" value="" />'.K_NEWLINE;
 echo '<select name="subject_module_id" id="subject_module_id" size="0" onchange="document.getElementById(\'form_selectquestions\').changemodule.value=1;document.getElementById(\'form_selectquestions\').changecategory.value=1; document.getElementById(\'form_selectquestions\').submit();" title="'.$l['w_module'].'">'.K_NEWLINE;
+$nama_modul = '';
+$nama_topik = '';
 $sql = F_select_modules_sql();
 if ($r = F_db_query($sql, $db)) {
     $countitem = 1;
@@ -191,6 +199,7 @@ if ($r = F_db_query($sql, $db)) {
         echo '<option value="'.$m['module_id'].'"';
         if ($m['module_id'] == $subject_module_id) {
             echo ' selected="selected"';
+			$nama_modul = $m['module_name'];
         }
         echo '>'.$countitem.'. ';
         if (F_getBoolean($m['module_enabled'])) {
@@ -198,6 +207,7 @@ if ($r = F_db_query($sql, $db)) {
         } else {
             echo '-';
         }
+		
         echo ' '.htmlspecialchars($m['module_name'], ENT_NOQUOTES, $l['a_meta_charset']).'&nbsp;</option>'.K_NEWLINE;
         $countitem++;
     }
@@ -228,6 +238,7 @@ if ($r = F_db_query($sql, $db)) {
         echo '<option value="'.$m['subject_id'].'"';
         if ($m['subject_id'] == $subject_id) {
             echo ' selected="selected"';
+			$nama_topik = $m['subject_name'];
         }
         echo '>'.$countitem.'. ';
         if (F_getBoolean($m['subject_enabled'])) {
@@ -300,6 +311,8 @@ echo '</div>'.K_NEWLINE;
 echo '<div class="row"><hr /></div>'.K_NEWLINE;
 
 echo '<div class="row jc-center" id="btnAction">'.K_NEWLINE;
+// echo $nama_modul;
+// echo $nama_topik;
 
 // show buttons by case
 if (isset($subject_id) and ($subject_id > 0)) {
@@ -338,6 +351,15 @@ echo F_getCSRFTokenField().K_NEWLINE;
 echo '</form>'.K_NEWLINE;
 
 echo '</div>'.K_NEWLINE;
+
+if (isset($subject_id) and ($subject_id > 0)) {
+?>
+<div class="row">
+<span class="label" style="width:10%"><label id="upload_mediafile" for="upload_mediafile">Upload media</label></span>
+<span class="formw" style="width:90%"><form id="upload_mediafile_form" action="tmf_upload_mediafile.php?nama_modul=<?php echo $nama_modul; ?>&nama_topik=<?php echo $nama_topik; ?>" class="dropzone w-100p" style="display:block"></form></span>
+</div>
+<?php
+}
 
 echo '<div class="pagehelp">'.$l['hp_select_all_questions'].'</div>'.K_NEWLINE;
 echo '</div>'.K_NEWLINE;

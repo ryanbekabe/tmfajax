@@ -29,21 +29,31 @@
 
 /**
  */
-
-require_once('tce_xhtml_header.php');
-
+if(f_sc_name('tmf_show_offline_sheet.php')){
+	require_once('tce_xhtml_header_offline.php');
+}else{
+	require_once('tce_xhtml_header.php');
+}
 // display header (image logo + timer)
 echo '<div class="header">'.K_NEWLINE;
 echo '<div class="left"></div>'.K_NEWLINE;
 echo '<div class="right">'.K_NEWLINE;
-echo '<a name="timersection" id="timersection"></a>'.K_NEWLINE;
-include('../../shared/code/tce_page_timer.php');
+if(!f_sc_name('tmf_show_offline_sheet.php')){
+	echo '<a name="timersection" id="timersection"></a>'.K_NEWLINE;
+	include('../../shared/code/tce_page_timer.php');
+}
 echo '</div>'.K_NEWLINE;
 echo '</div>'.K_NEWLINE;
 
+
+
 // display menu
 echo '<div id="menuBody">'.K_NEWLINE;
-echo '<div id="scrollayer" class="scrollmenu">'.K_NEWLINE;
+echo '<div id="scrollayer" class="scrollmenu ';
+if(f_sc_name('tmf_show_offline_sheet.php')){
+	echo 'hidden';
+}
+echo ' ">'.K_NEWLINE;
 if($_SESSION['session_user_level']>0){
 // echo '<p id="appDesc">'.K_APP_DESC.'</p>'.K_NEWLINE;	
 echo '<div style="padding-bottom:15px;background:#212121">';
@@ -76,8 +86,17 @@ if(isset($thispage_title_icon)){
 
 echo '<div class="content">'.K_NEWLINE;
 echo '<a name="topofdoc" id="topofdoc"></a>'.K_NEWLINE;
-echo '<div class="h-title d-iflex">'.K_NEWLINE;
-echo '<span id="mmCloseBtn"><i class="fas fa-bars"></i></span><h1>'.$page_icon.htmlspecialchars($thispage_title, ENT_NOQUOTES, $l['a_meta_charset']).'</h1>'.K_NEWLINE;
+if(f_sc_name('tmf_show_offline_sheet.php')){
+	echo '<div>'.K_NEWLINE;
+	echo '<h1 class="pageTitle">
+	<span id="menuShow" class="spmenubars spicoheader"><i class="fas fa-bars"></i></span>
+	<span id="menuHide" class="spmenubars spicoheader"><i class="fas fa-times"></i></span>
+	<span class="spicoheader"><i class="fas fa-school"></i></span><span class="splblheader">'.K_INSTITUTION_NAME.'</span></h1>'.K_NEWLINE;
+	echo '<h1 class="pageTitle pageTitleDesc"><span class="splblheader">'.htmlspecialchars($thispage_title, ENT_NOQUOTES, $l['a_meta_charset']).'</span></h1>'.K_NEWLINE;
+}else{
+	echo '<div class="h-title d-iflex">'.K_NEWLINE;
+	echo '<span id="mmCloseBtn"><i class="fas fa-bars"></i></span><h1>'.$page_icon.htmlspecialchars($thispage_title, ENT_NOQUOTES, $l['a_meta_charset']).'</h1>'.K_NEWLINE;
+}
 echo '</div>'.K_NEWLINE;
 
 //============================================================+

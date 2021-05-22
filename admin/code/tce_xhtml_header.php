@@ -101,6 +101,7 @@ echo '<link rel="shortcut icon" href="'.$thispage_icon.'" />'.K_NEWLINE;
 echo '<script src="'.K_PATH_HOST.K_PATH_TCEXAM.'shared/jscripts/vendor/jquery.min.js"></script>'.K_NEWLINE;
 echo '<script src="'.K_PATH_HOST.K_PATH_TCEXAM.'shared/jscripts/vendor/selectize.min.js"></script>'.K_NEWLINE;
 echo '<script src="'.K_PATH_HOST.K_PATH_TCEXAM.'shared/jscripts/vendor/select2.min.js"></script>'.K_NEWLINE;
+
 echo '<script>'.K_NEWLINE;
 echo 'const K_ADDRESS_LINE1 = "'.K_ADDRESS_LINE1.'"'.K_NEWLINE;
 echo 'const K_ADDRESS_LINE2 = "'.K_ADDRESS_LINE2.'"'.K_NEWLINE;
@@ -123,6 +124,7 @@ echo '<link rel="stylesheet" href="'.K_PATH_HOST.K_PATH_TCEXAM.'public/styles/fo
 echo '</head>'.K_NEWLINE;
 
 echo '<body>'.K_NEWLINE;
+
 
 global $login_error;
 if (isset($login_error) and $login_error) {

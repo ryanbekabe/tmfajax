@@ -456,6 +456,8 @@ echo '</span>'.K_NEWLINE;
 echo '&nbsp;'.K_NEWLINE;
 echo '</div>'.K_NEWLINE;
 
+echo '<div class="row d-flex" style="justify-content:center"><a href="tce_show_all_questions.php?order_field=question_enabled+DESC%2C+question_position%2C+question_description&subject_module_id='.$subject_module_id.'&submitted=1&firstrow=0" class="xmlbutton bg-purple">< '.ucfirst($l['w_list']).'</a></div>'.K_NEWLINE;
+
 echo '<div class="row"><hr /></div>'.K_NEWLINE;
 
 echo '<div class="rowl" title="'.$l['h_preview'].'">'.K_NEWLINE;

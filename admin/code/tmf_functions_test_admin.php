@@ -1192,7 +1192,7 @@ function F_addLogAnswersAdmin($testlog_id, $answers_ids)
 		$ans_data[] = '('.$testlog_id.', '.$answid.', -1, '.$i.')';
     }
 	$ans_data_val = implode(", ", $ans_data);
-	$sqli = 'INSERT INTO '.K_TABLE_LOG_ANSWER.' (
+	$sqli = 'INSERT IGNORE INTO '.K_TABLE_LOG_ANSWER.' (
 			logansw_testlog_id,
 			logansw_answer_id,
 			logansw_selected,
@@ -1236,7 +1236,7 @@ function F_addLogAnswersAdminMIV($arrForAnswer)
 	//var_dump($ans_data);
 	//echo '</pre>';
 	//die();
-	$sqli = 'INSERT INTO '.K_TABLE_LOG_ANSWER.' (
+	$sqli = 'INSERT IGNORE INTO '.K_TABLE_LOG_ANSWER.' (
 			logansw_testlog_id,
 			logansw_answer_id,
 			logansw_selected,
@@ -1324,7 +1324,7 @@ function F_newTestLogAdmin($testuser_id, $question_id, $score, $order, $num_answ
     $testuser_id = intval($testuser_id);
     $question_id = intval($question_id);
     $score = floatval($score);
-    $sqll = 'INSERT INTO '.K_TABLE_TESTS_LOGS.' (
+    $sqll = 'INSERT IGNORE INTO '.K_TABLE_TESTS_LOGS.' (
 		testlog_testuser_id,
 		testlog_question_id,
 		testlog_score,
@@ -1357,7 +1357,7 @@ function F_newTestLogAdminMIV($qData)
     $question_id = intval($question_id);
     $score = floatval($score);**/
 	$values = implode(", ", $qData);
-    $sqll = 'INSERT INTO '.K_TABLE_TESTS_LOGS.' (
+    $sqll = 'INSERT IGNORE INTO '.K_TABLE_TESTS_LOGS.' (
 		testlog_id,
 		testlog_testuser_id,
 		testlog_question_id,

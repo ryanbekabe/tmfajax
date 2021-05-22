@@ -781,6 +781,9 @@ function F_printTestResultStat($data, $nextorderdir, $order_field, $filter, $pub
     }
     $ret .= '<th title="'.$l['w_status'].' ('.$l['w_time'].' ['.$l['w_minutes'].'])">'.$l['w_status'].' ('.$l['w_time'].' ['.$l['w_minutes'].'])</th>'.K_NEWLINE;
     $ret .= '<th title="'.$l['h_testcomment'].'">'.$l['w_comment'].'</th>'.K_NEWLINE;
+	if(!$pubmode){
+		$ret .= '<th title="Offline sheet">Offline Sheet</th>'.K_NEWLINE;
+	}
     $ret .= '</tr>'.K_NEWLINE;
     foreach ($data['testuser'] as $tu) {
 		/* foreach(F_get_user_groups($tu['user_id']) as $guid){
@@ -817,6 +820,7 @@ function F_printTestResultStat($data, $nextorderdir, $order_field, $filter, $pub
             $ret .= '<td style="text-align:'.$tdalign.';">&nbsp;'.$tu['user_lastname'].'</td>'.K_NEWLINE;
             $ret .= '<td style="text-align:'.$tdalign.';">&nbsp;'.$tu['user_firstname'].'</td>'.K_NEWLINE;
             $ret .= '<td style="text-align:'.$tdalign.';">';
+			$grpname = array();
 			// foreach(F_get_user_groups($tu['user_id']) as $key => $value){
 				// $ret .= $value;
 				$sqlg = 'SELECT DISTINCT *
@@ -825,6 +829,7 @@ function F_printTestResultStat($data, $nextorderdir, $order_field, $filter, $pub
 						AND usrgrp_user_id='.$tu['user_id'];
                 if ($rg = F_db_query($sqlg, $db)) {
                     while ($mg = F_db_fetch_array($rg)) {
+						$grpname[] = $mg['group_name'];
                         $ret .= '<span class="bg-indigo brad-3 txt-white p-5 d-iblock m-5">'.$mg['group_name'].'</span>&nbsp;';
                     }
                 } else {
@@ -856,12 +861,24 @@ function F_printTestResultStat($data, $nextorderdir, $order_field, $filter, $pub
         } else {
             $ret .= '<td>&nbsp;</td>'.K_NEWLINE;
         }
+		if(!$pubmode){
+			$grpname_a = '';
+			foreach($grpname as $value){
+				$grpname_a .= $value.'_';
+			}
+			$grpname_a = rtrim($grpname_a,'_');
+			if(file_exists('../../admin/code/tmf_show_offline_sheet.php')){
+				$ret .= '<td align="center"><a href="tmf_show_offline_sheet.php?testuser_id='.$tu['id'].'&amp;test_id='.$tu['test']['test_id'].'&amp;user_id='.$tu['user_id'].'&amp;username='.$tu['user_name'].'&amp;testname='.$tu['test']['test_name'].'&amp;groupname='.$grpname_a.'" title="Download offline sheet"><i class="fas fa-download"></i></a></td>'.K_NEWLINE;
+			}else{
+				$ret .= '<td align="center"><a onclick="alert(\'File untuk keperluan ini harus request secara pribadi ke Maman Sulaeman\')" href="#" title="Download offline sheet"><i class="fas fa-download"></i></a></td>';
+			}
+		}
         $ret .= '</tr>'.K_NEWLINE;
     }
     $ret .= '<tr>';
-    $colspan = 18;
+    $colspan = 19;
     if ($pubmode) {
-        $colspan -= 3;
+        $colspan -= 4;
     }
     if ($stats == 0) {
         $colspan -= 5;
@@ -880,9 +897,9 @@ function F_printTestResultStat($data, $nextorderdir, $order_field, $filter, $pub
     foreach ($data['statistics'] as $row => $col) {
         if (in_array($row, $printstat)) {
             $ret .= '<tr>';
-            $scolspan = 10;
+            $scolspan = 11;
             if ($pubmode) {
-                $scolspan -= 3;
+                $scolspan -= 4;
             }
             $ret .= '<th colspan="'.$scolspan.'" style="text-align:'.$tdalignr.';">'.$l['w_'.$row].'</th>'.K_NEWLINE;
             if (in_array($row, $noperc)) {
